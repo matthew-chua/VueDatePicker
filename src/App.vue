@@ -29,7 +29,7 @@ const styles = {
 
 <template>
 <div class="flex justify-center">
-  <DatePicker :start-date="today" :end-date="today" @update:model-value="test" :styles="styles">
+  <DatePicker :start-date="today" :end-date="today" @update:model-value="test" >
   <template #header>
     Select Lockup Date
   </template>

@@ -8,27 +8,30 @@ dayjs.extend(isBetween)
 
 const props = withDefaults(
   defineProps<{
-  endDate: Date
-  startDate: Date
-  validDates?: Date[]
-  duration?: boolean
-  styles?: {
-    SELECTED_COLOR: string
-    VALID_COLOR: string
-    NOT_SELECTED_COLOR: string
-    BUTTON_COLOR: string
-    BACKGROUND_COLOR: string
-  }
-}>(), {
-  styles: {
-  SELECTED_COLOR: 'text-sky-600',
-  VALID_COLOR: 'text-black',
-  NOT_SELECTED_COLOR: 'text-gray-500',
-  BUTTON_COLOR: 'bg-sky-500',
-  BACKGROUND_COLOR: 'bg-sky-100'
-}
-}
-) 
+    endDate: Date
+    startDate: Date
+    validDates?: Date[]
+    duration?: boolean
+    styles?: {
+      SELECTED_COLOR: string
+      VALID_COLOR: string
+      NOT_SELECTED_COLOR: string
+      BUTTON_STYLES: string
+      BACKGROUND_COLOR: string
+      TEXT_COLOR: string
+    }
+  }>(),
+  {
+    styles: {
+      SELECTED_COLOR: 'text-blue-400 font-bold',
+      VALID_COLOR: 'text-white',
+      NOT_SELECTED_COLOR: 'text-gray-500',
+      BUTTON_STYLES: 'bg-blue-400 text-white hover:font-bold',
+      BACKGROUND_COLOR: 'bg-gray-800',
+      TEXT_COLOR: 'text-white',
+    },
+  },
+)
 
 const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
@@ -75,10 +78,6 @@ const paddedDates = computed(() => {
   return dates.value
 })
 
-// const lockDuration = computed(() => {
-//   return dayjs(endDate.value).diff(startDate.value, 'w')
-// })
-
 const selected = (date: string) => {
   console.log(date)
   return props.duration
@@ -105,21 +104,25 @@ const emit = defineEmits<{
       :class="styles.BACKGROUND_COLOR"
     >
       <div
-        class="mt-4 flex justify-center items-center text-2xl font-bold text-black"
+        class="mt-4 flex justify-center items-center text-2xl font-bold"
+        :class="styles.TEXT_COLOR"
       >
         <slot name="header" />
       </div>
 
       <div class="mt-4">
-        <div class="flex items-center justify-center text-black">
-          <button class="text-black" @click="monthDecrease">
-            prev
+        <div
+          class="flex items-center justify-center"
+          :class="styles.TEXT_COLOR"
+        >
+          <button @click="monthDecrease">
+            <ChevronLeftIcon class="w-6" />
           </button>
           <div class="flex-grow" />
           <div>{{ dayjs(currentMonth).format('MMM YYYY') }}</div>
           <div class="flex-grow" />
-          <button class="text-black" @click="monthIncrease">
-            next
+          <button @click="monthIncrease">
+            <ChevronRightIcon class="w-6" />
           </button>
         </div>
         <div class="mt-8 grid grid-cols-7">
@@ -161,18 +164,20 @@ const emit = defineEmits<{
       <div
         class="mt-8 flex w-full items-center justify-center p-4 text-water-200 sm:px-20"
       >
-        <div class="flex items-center flex-col">
-          Date Selected:
-          <br />
-          <span class="font-bold text-grass">
-            {{ selectedDate.format('DD MMM YYYY') }}
-          </span>
-        </div>
+        <slot name="selected-info">
+          <div class="flex items-center flex-col" :class="styles.TEXT_COLOR">
+            Date Selected:
+            <br />
+            <span class="font-bold text-grass">
+              {{ selectedDate.format('DD MMM YYYY') }}
+            </span>
+          </div>
+        </slot>
         <slot name="bottom-card" />
       </div>
       <button
         class="mt-8 rounded-full mb-4 px-20 py-2 sm:mb-0 sm:w-auto"
-        :class="styles.BUTTON_COLOR"
+        :class="styles.BUTTON_STYLES"
         @click="emit('update:model-value', selectedDate.toDate())"
       >
         <slot name="button-text" />
